@@ -180,8 +180,9 @@
             position: relative;
             z-index: 2; /* Acima do pseudo-elemento */
         }
+        /* Botões de resposta "errada" agora não se movem, então não precisam de position: absolute */
         .question-container .button:not(#secretAnswer1):not(#secretAnswer2) {
-            position: static;
+            position: static; /* Volta para o posicionamento normal de fluxo */
         }
         
         #secretAnswer1, #secretAnswer2 {
@@ -289,6 +290,75 @@
             font-size: 2.5em;
             margin-bottom: 20px;
         }
+
+        /* --- MEDIA QUERIES PARA MOBILE --- */
+        @media (max-width: 768px) {
+            /* Ajustes gerais de fonte e espaçamento */
+            body {
+                font-size: 14px; /* Fonte base menor */
+            }
+
+            h1 {
+                font-size: 1.8em; /* Títulos menores */
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .button {
+                padding: 12px 25px; /* Botões um pouco menores */
+                font-size: 1em;
+            }
+
+            #timeTogetherDisplay {
+                font-size: 0.8em; /* Contador menor */
+                padding: 5px 10px;
+                top: 5px; /* Mais perto do topo */
+            }
+            #timeTogetherDisplay span {
+                font-size: 0.8em;
+            }
+
+            #errorMessage {
+                font-size: 1.2em; /* Mensagem de erro adaptada */
+                padding: 15px 20px;
+            }
+
+            /* Ajustes para os contêineres de conteúdo */
+            .container,
+            .question-container,
+            .final-message {
+                padding: 15px;
+                max-width: 95%; /* Ocupa mais largura em mobile */
+            }
+
+            /* Botões de escolha (SIM/NÃO SEI) podem precisar de empilhamento */
+            .choice-buttons {
+                flex-direction: column; /* Empilha os botões SIM/NÃO SEI */
+                gap: 10px; /* Espaçamento entre eles */
+            }
+            .choice-buttons button {
+                width: 80%; /* Ocupa mais largura */
+                min-width: unset; /* Remove o mínimo para flexibilidade */
+            }
+
+            /* Imagens finais */
+            .yes-page .celebration-image,
+            .no-page .scary-image {
+                max-width: 90%; /* Aumenta um pouco para preencher mais a tela */
+            }
+
+            .yes-page .love-text {
+                font-size: 2em; /* Texto TE AMO menor */
+            }
+        }
+
+        /* --- FIM DAS MEDIA QUERIES --- */
         /* CSS TERMINA AQUI */
     </style>
 </head>
@@ -348,13 +418,13 @@
         </div>
 
         <div id="page-yes" style="display: none;">
-            <img src="kevin_douglas.png" alt="kevin_douglas.png" class="celebration-image">
+            <img src="kevin_douglas.png" alt="Douglas e Kevin felizes" class="celebration-image">
             <h1 class="love-text">TE AMO PRA SEMPRE &lt;3</h1>
         </div>
 
         <div id="page-no" style="display: none;">
             <h1>VOCÊ TEM CERTEZA? IONNALEE FICA TRISTE COM UMA NOTÍCIA DESSAS :(</h1>
-            <img src="ionnalee.png" alt="ionnalee.png" class="scary-image">
+            <img src="ionnalee.png" alt="Ionnallee triste" class="scary-image">
             <button id="restartButton" class="button" style="margin-top: 30px;">Começar de novo</button>
         </div>
     </div>
@@ -413,10 +483,7 @@
                 }
                 currentPage = pageId;
 
-                // Remove todas as classes de página primeiro para evitar conflitos
                 document.body.classList.remove('final-intro', 'yes-page', 'no-page');
-                
-                // Adiciona a classe da página atual, se houver
                 if (pageId === 'final-intro') {
                     document.body.classList.add('final-intro');
                 } else if (pageId === 'yes') {
