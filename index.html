@@ -35,6 +35,32 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
+        #errorMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 0, 0, 0.8); /* Vermelho semi-transparente */
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            z-index: 1001; /* Acima de tudo */
+            display: none; /* Escondido por padrão */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            animation: fadeInOut 3s forwards; /* Animação de fade */
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+
         .container {
             text-align: center;
             padding: 20px;
@@ -56,7 +82,6 @@
             font-weight: bold;
             transition: background-color 0.3s ease; /* Transição suave para o hover */
             margin: 10px;
-            /* Para os botões de pergunta, a posição será definida via JS/inline */
         }
 
         .button:hover {
@@ -75,10 +100,11 @@
             align-items: center;
             position: relative; /* Para os botões absolutos funcionarem corretamente dentro dela */
         }
-        .answer-button {
-            position: absolute; /* Para permitir movimento via JS */
-            margin: 10px;
+        /* Botões de resposta "errada" agora não se movem, então não precisam de position: absolute */
+        .question-container .button:not(#secretAnswer1):not(#secretAnswer2) {
+            position: static; /* Volta para o posicionamento normal de fluxo */
         }
+        
         /* Os botões secretos devem ter posição estática para não se moverem */
         #secretAnswer1, #secretAnswer2 {
             position: static;
@@ -188,6 +214,10 @@
 <body>
     <div id="timeTogetherDisplay"></div>
 
+    <div id="errorMessage">
+        Ops! Pense bem antes de responder.
+    </div>
+
     <div id="page-container">
         <div id="page-index">
             <div class="container">
@@ -200,20 +230,20 @@
         <div id="page-pergunta1" style="display: none;">
             <div class="question-container">
                 <h2>Pergunta 1: Se você me odeia, por que seus olhos brilham quando me olham?</h2>
-                <button id="answer1_1" class="answer-button button">Ai Douglas me poupe</button>
-                <button id="answer1_2" class="answer-button button">De raiva</button>
+                <button id="answer1_1" class="button">Ai Douglas me poupe</button>
+                <button id="answer1_2" class="button">De raiva</button>
                 <br>
-                <button id="secretAnswer1" class="button">Eu amo muito meu leão dourado!</button>
+                <button id="secretAnswer1" class="button">Resposta secreta: Eu amo muito meu leão dourado!</button>
             </div>
         </div>
 
         <div id="page-pergunta2" style="display: none;">
             <div class="question-container">
                 <h2>Pergunta 2: O que você prefere: Lutar com um leão ou me dar um beijo apaixonado</h2>
-                <button id="answer2_1" class="answer-button button">Não tenho medo de leões</button>
-                <button id="answer2_2" class="answer-button button">Ai Douglas, to com preguiça dessas perguntas</button>
+                <button id="answer2_1" class="button">Luto até com dois leões</button>
+                <button id="answer2_2" class="button">Ai Douglas, to com preguiça dessas perguntas</button>
                 <br>
-                <button id="secretAnswer2" class="button">Eu prefiro te dar o beijo apaixonado ♥</button>
+                <button id="secretAnswer2" class="button">Resposta secreta: Eu prefiro te dar o beijo apaixonado ♥</button>
             </div>
         </div>
 
@@ -269,9 +299,9 @@
             let currentPage = 'index'; // Começa na página inicial
             const backgroundMusic = document.getElementById('background-music');
             const timeTogetherDisplay = document.getElementById('timeTogetherDisplay'); // Elemento para o contador
+            const errorMessage = document.getElementById('errorMessage'); // Elemento da mensagem de erro
 
             // Data de início do relacionamento: 17/03/2022 às 17h30
-            // Usando o formato YYYY-MM-DDTHH:mm:ss para garantir compatibilidade
             const startDate = new Date('2022-03-17T17:30:00');
 
             // Função para atualizar o contador de tempo
@@ -280,21 +310,9 @@
                 const diff = now.getTime() - startDate.getTime(); // Diferença em milissegundos
 
                 // Cálculos
-                const seconds = Math.floor(diff / 1000);
-                const minutes = Math.floor(seconds / 60);
-                const hours = Math.floor(minutes / 60);
-                const days = Math.floor(hours / 24);
-
-                // Calcular anos, meses, dias, etc., de forma mais precisa
-                const years = Math.floor(days / 365.25); // Aproximação para anos bissextos
-                const remainingDays = days % 365.25; // Dias restantes após anos completos
-
-                const totalHours = Math.floor(diff / (1000 * 60 * 60));
-                const totalMinutes = Math.floor(diff / (1000 * 60));
                 const totalSeconds = Math.floor(diff / 1000);
-
-                const currentHours = totalHours % 24;
-                const currentMinutes = totalMinutes % 60;
+                const currentHours = Math.floor(totalSeconds / 3600);
+                const currentMinutes = Math.floor((totalSeconds % 3600) / 60);
                 const currentSeconds = totalSeconds % 60;
 
                 // Formatar para dois dígitos
@@ -302,9 +320,7 @@
 
                 // Exibir no elemento
                 if (timeTogetherDisplay) {
-                    timeTogetherDisplay.textContent = `Estamos juntos a: ${formatTwoDigits(currentHours)}horas ${formatTwoDigits(currentMinutes)}minutos ${formatTwoDigits(currentSeconds)}segundos`;
-                    // Você pode ajustar a exibição para incluir dias, meses, etc., se quiser.
-                    // Por exemplo: `Juntos há: ${days} dias, ${currentHours}h ${currentMinutes}m ${currentSeconds}s`
+                    timeTogetherDisplay.textContent = `Juntos há: ${formatTwoDigits(currentHours)}h ${formatTwoDigits(currentMinutes)}m ${formatTwoDigits(currentSeconds)}s`;
                 }
             }
 
@@ -322,9 +338,7 @@
                 currentPage = pageId;
 
                 // Adiciona ou remove classes do body para estilos específicos de cada página (ex: fundo preto)
-                // Remove todas as classes de página primeiro
                 document.body.classList.remove('final-intro', 'yes-page', 'no-page');
-                // Adiciona a classe da página atual, se houver
                 if (pageId === 'final-intro') {
                     document.body.classList.add('final-intro');
                 } else if (pageId === 'yes') {
@@ -332,44 +346,26 @@
                 } else if (pageId === 'no') {
                     document.body.classList.add('no-page');
                 } else {
-                    // Reseta para a cor padrão do body (verde metálico) se não for uma das páginas especiais
                     document.body.style.backgroundColor = '#A9D3B2';
                     document.body.style.color = '#333';
                 }
+            }
+
+            // Função para exibir a mensagem de erro
+            function showErrorMessage() {
+                errorMessage.style.display = 'block'; // Mostra a mensagem
+                setTimeout(() => {
+                    errorMessage.style.display = 'none'; // Esconde a mensagem após 3 segundos
+                }, 3000); // 3 segundos de duração da mensagem
             }
 
             // Garante que apenas a página inicial esteja visível ao carregar
             showPage(currentPage);
 
             // Tenta tocar a música assim que o DOM estiver pronto
-            // Nota: Navegadores podem bloquear autoplay sem interação do usuário
             backgroundMusic.play().catch(e => {
                 console.warn("Autoplay de áudio bloqueado. A música tocará ao clicar no botão 'Olá Kevin'.", e);
             });
-
-
-            // Função para fazer o botão se mover aleatoriamente
-            function moveButton(buttonId) {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    button.addEventListener('mouseover', () => {
-                        // Garante que o botão pode se mover livremente
-                        button.style.position = 'absolute';
-
-                        // Limites para o movimento, considerando a largura e altura da janela e do botão
-                        const maxX = window.innerWidth - button.offsetWidth - 40; // 40px de margem para evitar bordas
-                        const maxY = window.innerHeight - button.offsetHeight - 40; // 40px de margem
-
-                        // Gera posições aleatórias
-                        const newX = Math.max(20, Math.random() * maxX); // Mínimo de 20px da borda
-                        const newY = Math.max(20, Math.random() * maxY); // Mínimo de 20px da borda
-
-                        // Aplica as novas posições
-                        button.style.left = `${newX}px`;
-                        button.style.top = `${newY}px`;
-                    });
-                }
-            }
 
             // --- Lógica de Navegação e Interatividade ---
 
@@ -377,28 +373,34 @@
             const startButton = document.getElementById('startButton');
             if (startButton) {
                 startButton.addEventListener('click', () => {
-                    // Tenta tocar a música de novo, caso o autoplay tenha sido bloqueado
                     backgroundMusic.play().catch(e => console.error("Erro ao reproduzir áudio no clique:", e));
                     showPage('pergunta1');
                 });
             }
 
-
-            // Pergunta 1: Botões "Ai Douglas me poupe" e "De raiva" se movem
-            // Botão "Resposta secreta: Eu amo muito meu leão dourado!" avança
+            // Pergunta 1: Botões "Ai Douglas me poupe" e "De raiva" (respostas erradas)
+            // Botão "Resposta secreta: Eu amo muito meu leão dourado!" (resposta correta)
             if (pages['pergunta1']) {
-                moveButton('answer1_1');
-                moveButton('answer1_2');
+                document.getElementById('answer1_1').addEventListener('click', () => {
+                    showErrorMessage();
+                });
+                document.getElementById('answer1_2').addEventListener('click', () => {
+                    showErrorMessage();
+                });
                 document.getElementById('secretAnswer1').addEventListener('click', () => {
                     showPage('pergunta2');
                 });
             }
 
-            // Pergunta 2: Botões "Luto até com dois leões" e "Ai Douglas, to com preguiça..." se movem
-            // Botão "Resposta secreta 2: Eu prefiro te dar o beijo apaixonado ♥" avança
+            // Pergunta 2: Botões "Luto até com dois leões" e "Ai Douglas, to com preguiça..." (respostas erradas)
+            // Botão "Resposta secreta 2: Eu prefiro te dar o beijo apaixonado ♥" (resposta correta)
             if (pages['pergunta2']) {
-                moveButton('answer2_1');
-                moveButton('answer2_2');
+                document.getElementById('answer2_1').addEventListener('click', () => {
+                    showErrorMessage();
+                });
+                document.getElementById('answer2_2').addEventListener('click', () => {
+                    showErrorMessage();
+                });
                 document.getElementById('secretAnswer2').addEventListener('click', () => {
                     showPage('final-intro');
                 });
