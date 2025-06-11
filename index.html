@@ -11,6 +11,7 @@
             background-color: #A9D3B2; /* Verde Metálico */
             font-family: Arial, sans-serif; /* Uma fonte padrão, você pode mudar */
             display: flex;
+            flex-direction: column; /* Alterado para coluna para o contador ficar em cima */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -19,9 +20,29 @@
             overflow: hidden; /* Evita barras de rolagem desnecessárias por causa dos botões em movimento */
         }
 
+        #timeTogetherDisplay {
+            position: fixed; /* Fixa no topo */
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%); /* Centraliza */
+            background-color: rgba(255, 255, 255, 0.9); /* Fundo branco semi-transparente */
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #FF69B4; /* Cor rosa para o texto */
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .container {
             text-align: center;
             padding: 20px;
+            flex-grow: 1; /* Permite que o conteúdo cresça e ocupe espaço restante */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .button {
@@ -47,6 +68,12 @@
             padding: 20px;
             width: 100%;
             box-sizing: border-box; /* Garante que o padding não adicione largura extra */
+            flex-grow: 1; /* Para centralizar o conteúdo da pergunta */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* Para os botões absolutos funcionarem corretamente dentro dela */
         }
         .answer-button {
             position: absolute; /* Para permitir movimento via JS */
@@ -159,6 +186,8 @@
     </style>
 </head>
 <body>
+    <div id="timeTogetherDisplay"></div>
+
     <div id="page-container">
         <div id="page-index">
             <div class="container">
@@ -181,10 +210,10 @@
         <div id="page-pergunta2" style="display: none;">
             <div class="question-container">
                 <h2>Pergunta 2: O que você prefere: Lutar com um leão ou me dar um beijo apaixonado</h2>
-                <button id="answer2_1" class="answer-button button">Luto até com dois leões</button>
+                <button id="answer2_1" class="answer-button button">Não tenho medo de leões</button>
                 <button id="answer2_2" class="answer-button button">Ai Douglas, to com preguiça dessas perguntas</button>
                 <br>
-                <button id="secretAnswer2" class="button">Resposta secreta: Eu prefiro te dar o beijo apaixonado ♥</button>
+                <button id="secretAnswer2" class="button">Eu prefiro te dar o beijo apaixonado ♥</button>
             </div>
         </div>
 
@@ -239,6 +268,49 @@
             };
             let currentPage = 'index'; // Começa na página inicial
             const backgroundMusic = document.getElementById('background-music');
+            const timeTogetherDisplay = document.getElementById('timeTogetherDisplay'); // Elemento para o contador
+
+            // Data de início do relacionamento: 17/03/2022 às 17h30
+            // Usando o formato YYYY-MM-DDTHH:mm:ss para garantir compatibilidade
+            const startDate = new Date('2022-03-17T17:30:00');
+
+            // Função para atualizar o contador de tempo
+            function updateTimeTogether() {
+                const now = new Date();
+                const diff = now.getTime() - startDate.getTime(); // Diferença em milissegundos
+
+                // Cálculos
+                const seconds = Math.floor(diff / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+
+                // Calcular anos, meses, dias, etc., de forma mais precisa
+                const years = Math.floor(days / 365.25); // Aproximação para anos bissextos
+                const remainingDays = days % 365.25; // Dias restantes após anos completos
+
+                const totalHours = Math.floor(diff / (1000 * 60 * 60));
+                const totalMinutes = Math.floor(diff / (1000 * 60));
+                const totalSeconds = Math.floor(diff / 1000);
+
+                const currentHours = totalHours % 24;
+                const currentMinutes = totalMinutes % 60;
+                const currentSeconds = totalSeconds % 60;
+
+                // Formatar para dois dígitos
+                const formatTwoDigits = (num) => String(num).padStart(2, '0');
+
+                // Exibir no elemento
+                if (timeTogetherDisplay) {
+                    timeTogetherDisplay.textContent = `Juntos há: ${formatTwoDigits(currentHours)}h ${formatTwoDigits(currentMinutes)}m ${formatTwoDigits(currentSeconds)}s`;
+                    // Você pode ajustar a exibição para incluir dias, meses, etc., se quiser.
+                    // Por exemplo: `Juntos há: ${days} dias, ${currentHours}h ${currentMinutes}m ${currentSeconds}s`
+                }
+            }
+
+            // Inicia o contador e atualiza a cada segundo
+            updateTimeTogether();
+            setInterval(updateTimeTogether, 1000);
 
             // Função para mostrar a página correta e esconder as outras
             function showPage(pageId) {
@@ -285,12 +357,12 @@
                         button.style.position = 'absolute';
 
                         // Limites para o movimento, considerando a largura e altura da janela e do botão
-                        const maxX = window.innerWidth - button.offsetWidth - 20; // 20px de margem
-                        const maxY = window.innerHeight - button.offsetHeight - 20; // 20px de margem
+                        const maxX = window.innerWidth - button.offsetWidth - 40; // 40px de margem para evitar bordas
+                        const maxY = window.innerHeight - button.offsetHeight - 40; // 40px de margem
 
                         // Gera posições aleatórias
-                        const newX = Math.random() * maxX;
-                        const newY = Math.random() * maxY;
+                        const newX = Math.max(20, Math.random() * maxX); // Mínimo de 20px da borda
+                        const newY = Math.max(20, Math.random() * maxY); // Mínimo de 20px da borda
 
                         // Aplica as novas posições
                         button.style.left = `${newX}px`;
