@@ -167,27 +167,39 @@
             background-color: #E05BA2;
         }
 
+        /* Ajustes para a seção de perguntas */
         .question-container {
             text-align: center;
             padding: 20px;
             width: 100%;
             box-sizing: border-box;
-            flex-grow: 1;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column; /* Organiza os itens em coluna */
+            align-items: center; /* Centraliza horizontalmente */
             position: relative;
             z-index: 2; /* Acima do pseudo-elemento */
         }
-        /* Botões de resposta "errada" agora não se movem, então não precisam de position: absolute */
-        .question-container .button:not(#secretAnswer1):not(#secretAnswer2) {
-            position: static;
+
+        /* Espaçamento entre a pergunta (h2) e os botões */
+        .question-container h2 {
+            margin-bottom: 20px;
         }
-        
+
+        /* Estilo para os botões de resposta "errada" para garantir espaçamento uniforme e centralização */
+        .question-container > button:not(#secretAnswer1):not(#secretAnswer2) {
+            margin-bottom: 15px; /* Espaçamento entre os botões de resposta */
+            position: static; /* Garante que não haja posicionamento absoluto */
+            display: block; /* Ocupa a largura total e permite margens automáticas */
+            width: 80%; /* Ocupar uma largura razoável */
+            max-width: 300px; /* Limitar a largura máxima em telas maiores */
+            margin-left: auto; /* Centraliza */
+            margin-right: auto; /* Centraliza */
+        }
+
+        /* Estilo para os botões de resposta "secreta" */
         #secretAnswer1, #secretAnswer2 {
             position: static;
-            margin-top: 50px;
+            margin-top: 30px; /* Espaço entre os botões de resposta e o botão secreto */
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -254,15 +266,17 @@
             max-width: 80%;
             height: auto;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 20px; /* Mantém espaço abaixo do texto */
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            /* Removendo z-index aqui para que o texto possa ter um z-index maior */
         }
         .yes-page .love-text {
             font-size: 3em;
             color: #FF69B4; /* Cor Rosa */
             text-shadow: 0 0 10px #FF69B4, 0 0 20px #FF69B4; /* Sombra Rosa */
             animation: glow 1.5s infinite alternate;
-            margin-top: 20px;
+            margin-top: 0; /* Remove a margem superior para que o texto fique mais junto da imagem (ou como preferir) */
+            margin-bottom: 20px; /* Adiciona margem abaixo do texto para a imagem */
             font-weight: bold;
             position: relative; /* Para o z-index funcionar */
             z-index: 10; /* Para ficar acima da imagem */
@@ -420,8 +434,8 @@
         </div>
 
         <div id="page-yes" style="display: none;">
-            <img src="kevin_douglas.png" alt="Douglas e Kevin felizes" class="celebration-image">
             <h1 class="love-text">TE AMO PRA SEMPRE &lt;3</h1>
+            <img src="kevin_douglas.png" alt="Douglas e Kevin felizes" class="celebration-image">
         </div>
 
         <div id="page-no" style="display: none;">
