@@ -182,7 +182,7 @@
         }
         /* Botões de resposta "errada" agora não se movem, então não precisam de position: absolute */
         .question-container .button:not(#secretAnswer1):not(#secretAnswer2) {
-            position: static; /* Volta para o posicionamento normal de fluxo */
+            position: static;
         }
         
         #secretAnswer1, #secretAnswer2 {
@@ -259,11 +259,13 @@
         }
         .yes-page .love-text {
             font-size: 3em;
-            color: #FFD700;
-            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+            color: #FF69B4; /* Cor Rosa */
+            text-shadow: 0 0 10px #FF69B4, 0 0 20px #FF69B4; /* Sombra Rosa */
             animation: glow 1.5s infinite alternate;
             margin-top: 20px;
             font-weight: bold;
+            position: relative; /* Para o z-index funcionar */
+            z-index: 10; /* Para ficar acima da imagem */
         }
 
         @keyframes glow {
