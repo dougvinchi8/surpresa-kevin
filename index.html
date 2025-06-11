@@ -17,8 +17,59 @@
             min-height: 100vh;
             margin: 0;
             color: #333; /* Cor de texto padrão */
-            overflow: hidden; /* Evita barras de rolagem desnecessárias por causa dos botões em movimento */
+            overflow: hidden; /* Evita barras de rolagem desnecessárias */
+            position: relative; /* Para os glitters e corações */
         }
+
+        /* Glitter */
+        .glitter {
+            position: absolute;
+            background-color: #FFD700; /* Dourado */
+            opacity: 0.7;
+            border-radius: 50%;
+            pointer-events: none; /* Ignora cliques */
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from { transform: translateY(-10px) rotate(0deg); opacity: 0.7; }
+            to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Corações Explodindo */
+        .heart-particle {
+            position: absolute;
+            background-color: #FF69B4; /* Rosa do coração */
+            width: 20px;
+            height: 20px;
+            transform: rotate(-45deg);
+            pointer-events: none;
+            animation: explode 1s forwards;
+            z-index: 2000; /* Acima de tudo */
+        }
+        .heart-particle::before,
+        .heart-particle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #FF69B4;
+        }
+        .heart-particle::before {
+            top: -10px;
+            left: 0;
+        }
+        .heart-particle::after {
+            top: 0;
+            left: 10px;
+        }
+
+        @keyframes explode {
+            from { transform: scale(1) rotate(-45deg) translateY(0) translateX(0); opacity: 1; }
+            to { transform: scale(0) rotate(-45deg) translateY(-100px) translateX(calc((random() - 0.5) * 200px)); opacity: 0; }
+        }
+
 
         #timeTogetherDisplay {
             position: fixed; /* Fixa no topo */
@@ -33,7 +84,14 @@
             color: #FF69B4; /* Cor rosa para o texto */
             z-index: 1000; /* Garante que fique acima de outros elementos */
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
+            white-space: nowrap; /* Evita quebra de linha */
         }
+        #timeTogetherDisplay span {
+            display: block; /* Para o texto do contador ir para a linha de baixo */
+            font-size: 0.9em; /* Tamanho menor para a contagem */
+        }
+
 
         #errorMessage {
             position: fixed;
@@ -212,7 +270,7 @@
     </style>
 </head>
 <body>
-    <div id="timeTogetherDisplay"></div>
+    <div id="timeTogetherDisplay">Douglas e Kevin, juntos desde: <br><span id="timeCounter"></span></div>
 
     <div id="errorMessage">
         Ops! Pense bem antes de responder.
@@ -233,7 +291,7 @@
                 <button id="answer1_1" class="button">Ai Douglas me poupe</button>
                 <button id="answer1_2" class="button">De raiva</button>
                 <br>
-                <button id="secretAnswer1" class="button">Resposta secreta: Eu amo muito meu leão dourado!</button>
+                <button id="secretAnswer1" class="button">Eu amo muito meu leão dourado!</button>
             </div>
         </div>
 
@@ -243,7 +301,7 @@
                 <button id="answer2_1" class="button">Luto até com dois leões</button>
                 <button id="answer2_2" class="button">Ai Douglas, to com preguiça dessas perguntas</button>
                 <br>
-                <button id="secretAnswer2" class="button">Resposta secreta: Eu prefiro te dar o beijo apaixonado ♥</button>
+                <button id="secretAnswer2" class="button">Eu prefiro te dar o beijo apaixonado ♥</button>
             </div>
         </div>
 
@@ -298,7 +356,8 @@
             };
             let currentPage = 'index'; // Começa na página inicial
             const backgroundMusic = document.getElementById('background-music');
-            const timeTogetherDisplay = document.getElementById('timeTogetherDisplay'); // Elemento para o contador
+            const timeTogetherDisplay = document.getElementById('timeTogetherDisplay'); // Elemento para o título do contador
+            const timeCounterSpan = document.getElementById('timeCounter'); // Elemento para a contagem
             const errorMessage = document.getElementById('errorMessage'); // Elemento da mensagem de erro
 
             // Data de início do relacionamento: 17/03/2022 às 17h30
@@ -309,18 +368,16 @@
                 const now = new Date();
                 const diff = now.getTime() - startDate.getTime(); // Diferença em milissegundos
 
-                // Cálculos
                 const totalSeconds = Math.floor(diff / 1000);
-                const currentHours = Math.floor(totalSeconds / 3600);
-                const currentMinutes = Math.floor((totalSeconds % 3600) / 60);
-                const currentSeconds = totalSeconds % 60;
+                const days = Math.floor(totalSeconds / (3600 * 24));
+                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
 
-                // Formatar para dois dígitos
                 const formatTwoDigits = (num) => String(num).padStart(2, '0');
 
-                // Exibir no elemento
-                if (timeTogetherDisplay) {
-                    timeTogetherDisplay.textContent = `Juntos há: ${formatTwoDigits(currentHours)}h ${formatTwoDigits(currentMinutes)}m ${formatTwoDigits(currentSeconds)}s`;
+                if (timeCounterSpan) {
+                    timeCounterSpan.textContent = `${days} dias ${formatTwoDigits(hours)}h ${formatTwoDigits(minutes)}m ${formatTwoDigits(seconds)}s`;
                 }
             }
 
@@ -332,12 +389,11 @@
             function showPage(pageId) {
                 for (const pageName in pages) {
                     if (pages.hasOwnProperty(pageName)) {
-                        pages[pageName].style.display = (pageName === pageId) ? 'flex' : 'none'; // 'flex' para centralizar conteúdo
+                        pages[pageName].style.display = (pageName === pageId) ? 'flex' : 'none';
                     }
                 }
                 currentPage = pageId;
 
-                // Adiciona ou remove classes do body para estilos específicos de cada página (ex: fundo preto)
                 document.body.classList.remove('final-intro', 'yes-page', 'no-page');
                 if (pageId === 'final-intro') {
                     document.body.classList.add('final-intro');
@@ -353,18 +409,61 @@
 
             // Função para exibir a mensagem de erro
             function showErrorMessage() {
-                errorMessage.style.display = 'block'; // Mostra a mensagem
+                errorMessage.style.display = 'block';
                 setTimeout(() => {
-                    errorMessage.style.display = 'none'; // Esconde a mensagem após 3 segundos
-                }, 3000); // 3 segundos de duração da mensagem
+                    errorMessage.style.display = 'none';
+                }, 3000);
             }
+
+            // Função para criar e animar partículas de coração
+            function createHeartParticles(x, y) {
+                const numParticles = 15; // Quantidade de corações
+                for (let i = 0; i < numParticles; i++) {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart-particle');
+                    // Posição inicial ligeiramente aleatória em torno do clique
+                    heart.style.left = `${x + (Math.random() - 0.5) * 40}px`;
+                    heart.style.top = `${y + (Math.random() - 0.5) * 40}px`;
+                    
+                    // Adiciona um atraso aleatório para que não explodam todos ao mesmo tempo
+                    heart.style.animationDelay = `${Math.random() * 0.5}s`;
+                    
+                    document.body.appendChild(heart);
+
+                    // Remove a partícula após a animação
+                    heart.addEventListener('animationend', () => {
+                        heart.remove();
+                    });
+                }
+            }
+
+            // Inicia a criação de glitter (chamada a cada segundo)
+            function createGlitter() {
+                const glitter = document.createElement('div');
+                glitter.classList.add('glitter');
+                const size = Math.random() * 5 + 2; // Tamanho entre 2 e 7px
+                glitter.style.width = `${size}px`;
+                glitter.style.height = `${size}px`;
+                glitter.style.left = `${Math.random() * 100}vw`; // Posição horizontal aleatória
+                glitter.style.animationDuration = `${Math.random() * 5 + 5}s`; // Duração entre 5 e 10s
+                glitter.style.animationDelay = `${Math.random() * -5}s`; // Começa em diferentes pontos da animação
+                document.body.appendChild(glitter);
+
+                // Remove o glitter após cair
+                glitter.addEventListener('animationend', () => {
+                    glitter.remove();
+                });
+            }
+            // Cria um glitter a cada 0.2 segundos
+            setInterval(createGlitter, 200);
+
 
             // Garante que apenas a página inicial esteja visível ao carregar
             showPage(currentPage);
 
             // Tenta tocar a música assim que o DOM estiver pronto
             backgroundMusic.play().catch(e => {
-                console.warn("Autoplay de áudio bloqueado. A música tocará ao clicar no botão 'Olá Kevin'.", e);
+                console.warn("Autoplay de audio bloqueado. A música tocará ao clicar no botão 'Olá Kevin'.", e);
             });
 
             // --- Lógica de Navegação e Interatividade ---
@@ -379,7 +478,7 @@
             }
 
             // Pergunta 1: Botões "Ai Douglas me poupe" e "De raiva" (respostas erradas)
-            // Botão "Resposta secreta: Eu amo muito meu leão dourado!" (resposta correta)
+            // Botão "Eu amo muito meu leão dourado!" (resposta correta)
             if (pages['pergunta1']) {
                 document.getElementById('answer1_1').addEventListener('click', () => {
                     showErrorMessage();
@@ -387,13 +486,14 @@
                 document.getElementById('answer1_2').addEventListener('click', () => {
                     showErrorMessage();
                 });
-                document.getElementById('secretAnswer1').addEventListener('click', () => {
-                    showPage('pergunta2');
+                document.getElementById('secretAnswer1').addEventListener('click', (event) => {
+                    createHeartParticles(event.clientX, event.clientY); // Corações no clique
+                    setTimeout(() => showPage('pergunta2'), 500); // Pequeno atraso para ver os corações
                 });
             }
 
             // Pergunta 2: Botões "Luto até com dois leões" e "Ai Douglas, to com preguiça..." (respostas erradas)
-            // Botão "Resposta secreta 2: Eu prefiro te dar o beijo apaixonado ♥" (resposta correta)
+            // Botão "Eu prefiro te dar o beijo apaixonado ♥" (resposta correta)
             if (pages['pergunta2']) {
                 document.getElementById('answer2_1').addEventListener('click', () => {
                     showErrorMessage();
@@ -401,8 +501,9 @@
                 document.getElementById('answer2_2').addEventListener('click', () => {
                     showErrorMessage();
                 });
-                document.getElementById('secretAnswer2').addEventListener('click', () => {
-                    showPage('final-intro');
+                document.getElementById('secretAnswer2').addEventListener('click', (event) => {
+                    createHeartParticles(event.clientX, event.clientY); // Corações no clique
+                    setTimeout(() => showPage('final-intro'), 500); // Pequeno atraso para ver os corações
                 });
             }
 
@@ -415,8 +516,9 @@
 
             // Pergunta Final: Botões "SIM" e "NÃO SEI"
             if (pages['final-question']) {
-                document.getElementById('yesButton').addEventListener('click', () => {
-                    showPage('yes');
+                document.getElementById('yesButton').addEventListener('click', (event) => {
+                    createHeartParticles(event.clientX, event.clientY); // Corações no clique do SIM
+                    setTimeout(() => showPage('yes'), 500); // Pequeno atraso para ver os corações
                 });
 
                 document.getElementById('noButton').addEventListener('click', () => {
