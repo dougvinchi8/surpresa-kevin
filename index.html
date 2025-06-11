@@ -11,14 +11,33 @@
             background-color: #A9D3B2; /* Verde Metálico */
             font-family: Arial, sans-serif; /* Uma fonte padrão, você pode mudar */
             display: flex;
-            flex-direction: column; /* Alterado para coluna para o contador ficar em cima */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            color: #333; /* Cor de texto padrão */
-            overflow: hidden; /* Evita barras de rolagem desnecessárias */
-            position: relative; /* Para os glitters e corações */
+            color: #333;
+            overflow: hidden;
+            position: relative; /* Necessário para o pseudo-elemento ::before */
+            z-index: 1; /* Para que outros elementos fiquem acima do fundo */
+        }
+
+        /* Fundo da imagem com baixa opacidade */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('kevin_douglas.jpg'); /* Sua imagem aqui */
+            background-size: cover; /* Cobre todo o fundo */
+            background-position: center; /* Centraliza a imagem */
+            background-repeat: no-repeat; /* Não repete a imagem */
+            opacity: 0.05; /* Opacidade bem baixa (5%). Ajuste este valor! */
+            z-index: -1; /* Coloca a imagem atrás de todo o conteúdo */
+            filter: grayscale(100%); /* Opcional: para que a imagem não distraia com cores */
+            /* filter: blur(2px); */ /* Opcional: Desfocar levemente a imagem */
         }
 
         /* Glitter */
@@ -122,11 +141,13 @@
         .container {
             text-align: center;
             padding: 20px;
-            flex-grow: 1; /* Permite que o conteúdo cresça e ocupe espaço restante */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative; /* Para garantir que o conteúdo fique acima do background do body */
+            z-index: 2; /* Acima do pseudo-elemento */
         }
 
         .button {
@@ -138,44 +159,42 @@
             cursor: pointer;
             font-size: 1.2em;
             font-weight: bold;
-            transition: background-color 0.3s ease; /* Transição suave para o hover */
+            transition: background-color 0.3s ease;
             margin: 10px;
         }
 
         .button:hover {
-            background-color: #E05BA2; /* Um rosa um pouco mais escuro ao passar o mouse */
+            background-color: #E05BA2;
         }
 
         .question-container {
             text-align: center;
             padding: 20px;
             width: 100%;
-            box-sizing: border-box; /* Garante que o padding não adicione largura extra */
-            flex-grow: 1; /* Para centralizar o conteúdo da pergunta */
+            box-sizing: border-box;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative; /* Para os botões absolutos funcionarem corretamente dentro dela */
+            position: relative;
+            z-index: 2; /* Acima do pseudo-elemento */
         }
-        /* Botões de resposta "errada" agora não se movem, então não precisam de position: absolute */
         .question-container .button:not(#secretAnswer1):not(#secretAnswer2) {
-            position: static; /* Volta para o posicionamento normal de fluxo */
+            position: static;
         }
         
-        /* Os botões secretos devem ter posição estática para não se moverem */
         #secretAnswer1, #secretAnswer2 {
             position: static;
-            margin-top: 50px; /* Adiciona um espaço abaixo das respostas "erradas" */
-            display: block; /* Para que o botão secreto fique em sua própria linha */
-            margin-left: auto; /* Centraliza o botão secreto */
-            margin-right: auto; /* Centraliza o botão secreto */
+            margin-top: 50px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
 
-        /* Estilos específicos para a página de introdução à pergunta final */
         body.final-intro {
-            background-color: black; /* Fundo preto */
+            background-color: black;
             color: white;
             flex-direction: column;
         }
@@ -184,18 +203,24 @@
             text-align: center;
             margin-bottom: 30px;
         }
+        /* Ajusta o pseudo-elemento ::before para as páginas que mudam o background */
+        body.final-intro::before,
+        body.no-page::before {
+            background-image: none; /* Remove a imagem de fundo nessas páginas */
+        }
 
-        /* Estilos para a página da pergunta final */
+
         .final-message {
             text-align: center;
             padding: 20px;
             max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.8); /* Fundo semi-transparente para o texto */
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            z-index: 2; /* Acima do pseudo-elemento */
         }
         .final-message h1 {
-            color: #FF69B4; /* Rosa para o nome Kevin */
+            color: #FF69B4;
         }
         .final-message p {
             font-size: 1.2em;
@@ -211,22 +236,21 @@
             margin-top: 30px;
             display: flex;
             justify-content: center;
-            gap: 20px; /* Espaçamento entre os botões SIM e NÃO SEI */
+            gap: 20px;
         }
         .choice-buttons button {
-            min-width: 150px; /* Garante um tamanho mínimo para os botões */
+            min-width: 150px;
         }
 
-        /* Estilos para a página "SIM" */
         body.yes-page {
-            background-color: #A9D3B2; /* Fundo verde, pode ser ajustado para combinar */
+            background-color: #A9D3B2;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
         }
         .yes-page .celebration-image {
-            max-width: 80%; /* Ajuste para caber bem na tela */
+            max-width: 80%;
             height: auto;
             border-radius: 10px;
             margin-top: 20px;
@@ -234,9 +258,9 @@
         }
         .yes-page .love-text {
             font-size: 3em;
-            color: #FFD700; /* Dourado para o brilho */
-            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; /* Efeito de brilho */
-            animation: glow 1.5s infinite alternate; /* Animação de brilho */
+            color: #FFD700;
+            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+            animation: glow 1.5s infinite alternate;
             margin-top: 20px;
             font-weight: bold;
         }
@@ -246,7 +270,6 @@
             to { text-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFD700; }
         }
 
-        /* Estilos para a página "NÃO SEI" */
         body.no-page {
             background-color: black;
             color: white;
@@ -330,8 +353,8 @@
         </div>
 
         <div id="page-no" style="display: none;">
-            <h1>VOCÊ TEM CERTEZA?</h1>
-            <img src="https://super.abril.com.br/wp-content/uploads/2018/07/500dad5a9827684fc200011cbebe-chorando-site1.jpg?quality=70&strip=info&w=620&h=620&crop=1" alt="Scary Face" class="scary-image">
+            <h1>VOCÊ TEM CERTEZA? IONNALEE FICA TRISTE COM UMA NOTÍCIA DESSAS :(</h1>
+            <img src="https://wallpapers.com/images/high/scary-face-pictures-fxsjuft5pjizzp7u.webp" alt="Scary Face" class="scary-image">
             <button id="restartButton" class="button" style="margin-top: 30px;">Começar de novo</button>
         </div>
     </div>
@@ -354,19 +377,17 @@
                 'yes': document.getElementById('page-yes'),
                 'no': document.getElementById('page-no')
             };
-            let currentPage = 'index'; // Começa na página inicial
+            let currentPage = 'index';
             const backgroundMusic = document.getElementById('background-music');
-            const timeTogetherDisplay = document.getElementById('timeTogetherDisplay'); // Elemento para o título do contador
-            const timeCounterSpan = document.getElementById('timeCounter'); // Elemento para a contagem
-            const errorMessage = document.getElementById('errorMessage'); // Elemento da mensagem de erro
+            const timeTogetherDisplay = document.getElementById('timeTogetherDisplay');
+            const timeCounterSpan = document.getElementById('timeCounter');
+            const errorMessage = document.getElementById('errorMessage');
 
-            // Data de início do relacionamento: 17/03/2022 às 17h30
             const startDate = new Date('2022-03-17T17:30:00');
 
-            // Função para atualizar o contador de tempo
             function updateTimeTogether() {
                 const now = new Date();
-                const diff = now.getTime() - startDate.getTime(); // Diferença em milissegundos
+                const diff = now.getTime() - startDate.getTime();
 
                 const totalSeconds = Math.floor(diff / 1000);
                 const days = Math.floor(totalSeconds / (3600 * 24));
@@ -381,11 +402,9 @@
                 }
             }
 
-            // Inicia o contador e atualiza a cada segundo
             updateTimeTogether();
             setInterval(updateTimeTogether, 1000);
 
-            // Função para mostrar a página correta e esconder as outras
             function showPage(pageId) {
                 for (const pageName in pages) {
                     if (pages.hasOwnProperty(pageName)) {
@@ -394,20 +413,19 @@
                 }
                 currentPage = pageId;
 
+                // Remove todas as classes de página primeiro para evitar conflitos
                 document.body.classList.remove('final-intro', 'yes-page', 'no-page');
+                
+                // Adiciona a classe da página atual, se houver
                 if (pageId === 'final-intro') {
                     document.body.classList.add('final-intro');
                 } else if (pageId === 'yes') {
                     document.body.classList.add('yes-page');
                 } else if (pageId === 'no') {
                     document.body.classList.add('no-page');
-                } else {
-                    document.body.style.backgroundColor = '#A9D3B2';
-                    document.body.style.color = '#333';
                 }
             }
 
-            // Função para exibir a mensagem de erro
             function showErrorMessage() {
                 errorMessage.style.display = 'block';
                 setTimeout(() => {
@@ -415,60 +433,45 @@
                 }, 3000);
             }
 
-            // Função para criar e animar partículas de coração
             function createHeartParticles(x, y) {
-                const numParticles = 15; // Quantidade de corações
+                const numParticles = 15;
                 for (let i = 0; i < numParticles; i++) {
                     const heart = document.createElement('div');
                     heart.classList.add('heart-particle');
-                    // Posição inicial ligeiramente aleatória em torno do clique
                     heart.style.left = `${x + (Math.random() - 0.5) * 40}px`;
                     heart.style.top = `${y + (Math.random() - 0.5) * 40}px`;
-                    
-                    // Adiciona um atraso aleatório para que não explodam todos ao mesmo tempo
                     heart.style.animationDelay = `${Math.random() * 0.5}s`;
-                    
                     document.body.appendChild(heart);
 
-                    // Remove a partícula após a animação
                     heart.addEventListener('animationend', () => {
                         heart.remove();
                     });
                 }
             }
 
-            // Inicia a criação de glitter (chamada a cada segundo)
             function createGlitter() {
                 const glitter = document.createElement('div');
                 glitter.classList.add('glitter');
-                const size = Math.random() * 5 + 2; // Tamanho entre 2 e 7px
+                const size = Math.random() * 5 + 2;
                 glitter.style.width = `${size}px`;
                 glitter.style.height = `${size}px`;
-                glitter.style.left = `${Math.random() * 100}vw`; // Posição horizontal aleatória
-                glitter.style.animationDuration = `${Math.random() * 5 + 5}s`; // Duração entre 5 e 10s
-                glitter.style.animationDelay = `${Math.random() * -5}s`; // Começa em diferentes pontos da animação
+                glitter.style.left = `${Math.random() * 100}vw`;
+                glitter.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                glitter.style.animationDelay = `${Math.random() * -5}s`;
                 document.body.appendChild(glitter);
 
-                // Remove o glitter após cair
                 glitter.addEventListener('animationend', () => {
                     glitter.remove();
                 });
             }
-            // Cria um glitter a cada 0.2 segundos
             setInterval(createGlitter, 200);
 
-
-            // Garante que apenas a página inicial esteja visível ao carregar
             showPage(currentPage);
 
-            // Tenta tocar a música assim que o DOM estiver pronto
             backgroundMusic.play().catch(e => {
                 console.warn("Autoplay de audio bloqueado. A música tocará ao clicar no botão 'Olá Kevin'.", e);
             });
 
-            // --- Lógica de Navegação e Interatividade ---
-
-            // Página Inicial: Botão "Olá Kevin!"
             const startButton = document.getElementById('startButton');
             if (startButton) {
                 startButton.addEventListener('click', () => {
@@ -477,8 +480,6 @@
                 });
             }
 
-            // Pergunta 1: Botões "Ai Douglas me poupe" e "De raiva" (respostas erradas)
-            // Botão "Eu amo muito meu leão dourado!" (resposta correta)
             if (pages['pergunta1']) {
                 document.getElementById('answer1_1').addEventListener('click', () => {
                     showErrorMessage();
@@ -487,13 +488,11 @@
                     showErrorMessage();
                 });
                 document.getElementById('secretAnswer1').addEventListener('click', (event) => {
-                    createHeartParticles(event.clientX, event.clientY); // Corações no clique
-                    setTimeout(() => showPage('pergunta2'), 500); // Pequeno atraso para ver os corações
+                    createHeartParticles(event.clientX, event.clientY);
+                    setTimeout(() => showPage('pergunta2'), 500);
                 });
             }
 
-            // Pergunta 2: Botões "Luto até com dois leões" e "Ai Douglas, to com preguiça..." (respostas erradas)
-            // Botão "Eu prefiro te dar o beijo apaixonado ♥" (resposta correta)
             if (pages['pergunta2']) {
                 document.getElementById('answer2_1').addEventListener('click', () => {
                     showErrorMessage();
@@ -502,23 +501,21 @@
                     showErrorMessage();
                 });
                 document.getElementById('secretAnswer2').addEventListener('click', (event) => {
-                    createHeartParticles(event.clientX, event.clientY); // Corações no clique
-                    setTimeout(() => showPage('final-intro'), 500); // Pequeno atraso para ver os corações
+                    createHeartParticles(event.clientX, event.clientY);
+                    setTimeout(() => showPage('final-intro'), 500);
                 });
             }
 
-            // Introdução à Pergunta Final: Botão "Estou pronto e desejo continuar"
             if (pages['final-intro']) {
                 document.getElementById('readyButton').addEventListener('click', () => {
                     showPage('final-question');
                 });
             }
 
-            // Pergunta Final: Botões "SIM" e "NÃO SEI"
             if (pages['final-question']) {
                 document.getElementById('yesButton').addEventListener('click', (event) => {
-                    createHeartParticles(event.clientX, event.clientY); // Corações no clique do SIM
-                    setTimeout(() => showPage('yes'), 500); // Pequeno atraso para ver os corações
+                    createHeartParticles(event.clientX, event.clientY);
+                    setTimeout(() => showPage('yes'), 500);
                 });
 
                 document.getElementById('noButton').addEventListener('click', () => {
@@ -526,7 +523,6 @@
                 });
             }
 
-            // Página "NÃO SEI": Botão "Começar de novo"
             if (pages['no']) {
                 document.getElementById('restartButton').addEventListener('click', () => {
                     showPage('index');
