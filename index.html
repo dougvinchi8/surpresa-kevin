@@ -160,7 +160,7 @@
             font-size: 1.2em;
             font-weight: bold;
             transition: background-color 0.3s ease;
-            margin: 10px;
+            margin: 10px; /* Margem padrão para todos os botões */
         }
 
         .button:hover {
@@ -182,7 +182,7 @@
 
         /* Espaçamento entre a pergunta (h2) e os botões */
         .question-container h2 {
-            margin-bottom: 20px;
+            margin-bottom: 25px; /* Aumentado para mais espaço após a pergunta */
         }
 
         /* Estilo para os botões de resposta "errada" para garantir espaçamento uniforme e centralização */
@@ -199,7 +199,7 @@
         /* Estilo para os botões de resposta "secreta" */
         #secretAnswer1, #secretAnswer2 {
             position: static;
-            margin-top: 30px; /* Espaço entre os botões de resposta e o botão secreto */
+            margin-top: 25px; /* Espaço entre os botões de resposta e o botão secreto (mais próximo) */
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -257,7 +257,7 @@
 
         body.yes-page {
             background-color: #A9D3B2;
-            flex-direction: column;
+            flex-direction: column; /* Para empilhar imagem e texto */
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -266,9 +266,10 @@
             max-width: 80%;
             height: auto;
             border-radius: 10px;
-            margin-top: 20px; /* Mantém espaço abaixo do texto */
+            margin-bottom: 20px; /* Margem abaixo da imagem para o texto */
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            /* Removendo z-index aqui para que o texto possa ter um z-index maior */
+            position: relative; /* Para garantir que a imagem tenha um z-index padrão adequado */
+            z-index: 1; /* A imagem pode ter z-index 1 */
         }
         .yes-page .love-text {
             font-size: 3em;
@@ -276,10 +277,9 @@
             text-shadow: 0 0 10px #FF69B4, 0 0 20px #FF69B4; /* Sombra Rosa */
             animation: glow 1.5s infinite alternate;
             margin-top: 0; /* Remove a margem superior para que o texto fique mais junto da imagem (ou como preferir) */
-            margin-bottom: 20px; /* Adiciona margem abaixo do texto para a imagem */
             font-weight: bold;
             position: relative; /* Para o z-index funcionar */
-            z-index: 10; /* Para ficar acima da imagem */
+            z-index: 2; /* Para ficar acima da imagem */
         }
 
         @keyframes glow {
@@ -434,8 +434,8 @@
         </div>
 
         <div id="page-yes" style="display: none;">
-            <h1 class="love-text">TE AMO PRA SEMPRE &lt;3</h1>
             <img src="kevin_douglas.png" alt="Douglas e Kevin felizes" class="celebration-image">
+            <h1 class="love-text">TE AMO PRA SEMPRE &lt;3</h1>
         </div>
 
         <div id="page-no" style="display: none;">
